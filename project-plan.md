@@ -33,6 +33,8 @@ A simple, mobile-responsive web app for solo business owners (consultants, coach
 - [ ] Implement federal income tax calculation utilities
 - [ ] Build self-employment tax calculation (15.3% on net earnings)
 - [ ] Create quarterly payment calculation logic
+  - Safe harbor of 100% of last year's taxes (or 110% if income >$150k), or
+  - 90% of current year's projected taxes
 - [ ] Add comprehensive unit tests for all calculation functions
 - [ ] Validate calculations with real-world tax scenarios
 - [ ] Handle edge cases and input validation
@@ -87,11 +89,8 @@ A simple, mobile-responsive web app for solo business owners (consultants, coach
 ## Future Enhancements (Post-MVP)
 - User authentication and account management
 - Historical data tracking and year-over-year comparisons
-- Enhanced deduction support (business expenses, home office)
 - Email reminder system for payment due dates
 - Export functionality (PDF reports, CSV data)
-- Integration with popular accounting software
-- State tax calculation support
 - Advanced tax scenarios (multiple income streams, estimated deductions)
 
 ## Success Metrics for MVP
@@ -107,12 +106,3 @@ A simple, mobile-responsive web app for solo business owners (consultants, coach
 - **Performance**: Fast loading and smooth interactions
 - **Accessibility**: WCAG compliance for inclusive design
 - **SEO**: Basic optimization for organic discovery
-
-## Project Timeline
-- **Checkpoint 1**: 1-2 days
-- **Checkpoint 2**: 2-3 days  
-- **Checkpoint 3**: 2-3 days
-- **Checkpoint 4**: 1-2 days
-- **Checkpoint 5**: 1 day
-
-**Total Estimated Timeline**: 7-11 days for MVP completion

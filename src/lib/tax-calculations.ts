@@ -202,20 +202,22 @@ export function calculateQuarterlyPayments(input: TaxCalculationInput): TaxCalcu
   const { 
     annualIncome, 
     previousYearTax, 
-    currentYearPayments = 0,
-    includeQBI = false,
-    includeRetirementContributions = false,
-    retirementContributionAmount = 0
+    currentYearPaymentsMade = 0,
+    w2Income = 0,
+    estimatedWithholding = 0
   } = input;
   
-  // Calculate current year tax liability with optional deductions
+  // For MVP, all income is self-employment income
+  const selfEmploymentIncome = annualIncome - w2Income;
+  
+  // Calculate current year tax liability
   const currentYearTaxCalc = calculateTotalTax(
-    annualIncome,
-    includeQBI,
-    includeRetirementContributions,
-    retirementContributionAmount
+    selfEmploymentIncome,
+    true, // includeQBI
+    false, // includeRetirementContributions
+    0 // retirementContributionAmount
   );
-  const currentYearTax = currentYearTaxCalc.totalTax;
+  const currentYearTax = currentYearTaxCalc.totalTax - estimatedWithholding;
   
   // Determine safe harbor amount
   let safeHarborAmount = previousYearTax * SAFE_HARBOR_PERCENTAGE_PRIOR_YEAR;
@@ -232,14 +234,16 @@ export function calculateQuarterlyPayments(input: TaxCalculationInput): TaxCalcu
   // Check if estimated payments are even required
   if (currentYearTax < SAFE_HARBOR_THRESHOLD) {
     return {
-      totalAnnualTax: currentYearTax,
+      totalEstimatedTax: currentYearTax,
+      safeHarborAmount: 0,
       quarterlyPayments: QUARTERLY_DUE_DATES_2025.map(q => ({
         quarter: q.quarter,
-        amount: 0,
+        amountDue: 0,
         dueDate: q.dueDate,
+        isPaid: false,
+        amountPaid: 0,
       })),
-      totalDue: 0,
-      remainingPayments: 0,
+      totalRemaining: 0,
     };
   }
   
@@ -248,19 +252,30 @@ export function calculateQuarterlyPayments(input: TaxCalculationInput): TaxCalcu
   
   // Calculate total payments needed
   const totalPaymentsNeeded = quarterlyAmount * 4;
-  const remainingPayments = Math.max(0, totalPaymentsNeeded - currentYearPayments);
+  const totalRemaining = Math.max(0, totalPaymentsNeeded - currentYearPaymentsMade);
+  
+  // Determine how many quarters have been paid
+  const paymentsMadePerQuarter = currentYearPaymentsMade / 4;
   
   // Create quarterly payment schedule
-  const quarterlyPayments = QUARTERLY_DUE_DATES_2025.map(q => ({
-    quarter: q.quarter,
-    amount: quarterlyAmount,
-    dueDate: q.dueDate,
-  }));
+  const quarterlyPayments = QUARTERLY_DUE_DATES_2025.map((q) => {
+    const quarterlyPaymentsMade = Math.min(paymentsMadePerQuarter, quarterlyAmount);
+    const isPaid = quarterlyPaymentsMade >= quarterlyAmount;
+    const amountDue = isPaid ? 0 : quarterlyAmount - quarterlyPaymentsMade;
+    
+    return {
+      quarter: q.quarter,
+      amountDue,
+      dueDate: q.dueDate,
+      isPaid,
+      amountPaid: quarterlyPaymentsMade,
+    };
+  });
   
   return {
-    totalAnnualTax: currentYearTax,
+    totalEstimatedTax: currentYearTax,
+    safeHarborAmount: requiredAnnualPayment,
     quarterlyPayments,
-    totalDue: totalPaymentsNeeded,
-    remainingPayments,
+    totalRemaining,
   };
 }
