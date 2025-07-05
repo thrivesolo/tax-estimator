@@ -1,8 +1,6 @@
 import {
   FEDERAL_TAX_BRACKETS_2025,
   STANDARD_DEDUCTION_2025,
-  SELF_EMPLOYMENT_TAX_RATE,
-  SELF_EMPLOYMENT_TAX_DEDUCTION,
   QUARTERLY_DUE_DATES_2025,
   SAFE_HARBOR_THRESHOLD,
   SAFE_HARBOR_PERCENTAGE,
@@ -172,7 +170,14 @@ export function calculateTotalTax(
   // Total tax liability
   const totalTax = incomeTax + seTax;
   
-  const result: any = {
+  const result: {
+    incomeTax: number;
+    seTax: number;
+    totalTax: number;
+    agi: number;
+    qbiDeduction?: number;
+    retirementContributions?: number;
+  } = {
     incomeTax,
     seTax,
     totalTax,
