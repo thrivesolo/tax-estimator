@@ -1,0 +1,8 @@
+# Robots.txt for Quarterly Tax Estimator
+
+User-agent: *
+Allow: /
+Disallow: /api/
+
+# Sitemap location
+Sitemap: https://yourdomain.com/sitemap.xml
