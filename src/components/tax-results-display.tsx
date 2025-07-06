@@ -1,8 +1,15 @@
 "use client"
 
+import dynamic from "next/dynamic"
 import { Button, Card, CardContent, CardDescription, CardHeader, CardTitle, Badge, Alert, AlertDescription } from "@/components/ui"
 import { formatCurrency, formatDate } from "@/lib/utils"
+import { analytics } from "@/lib/analytics"
 import type { TaxCalculationResult } from "@/types"
+
+const AnimatedNumber = dynamic(() => import("@/components/ui/animated-number").then(mod => mod.AnimatedNumber), {
+  loading: () => <span>Loading...</span>,
+  ssr: false
+})
 
 interface TaxResultsDisplayProps {
   results: TaxCalculationResult
@@ -32,13 +39,13 @@ export function TaxResultsDisplay({ results, onReset }: TaxResultsDisplayProps) 
             <div>
               <p className="text-sm text-neutral-600">Total Estimated Tax</p>
               <p className="text-2xl font-semibold text-neutral-900">
-                {formatCurrency(results.totalEstimatedTax)}
+                <AnimatedNumber value={results.totalEstimatedTax} />
               </p>
             </div>
             <div>
               <p className="text-sm text-neutral-600">Safe Harbor Amount</p>
               <p className="text-2xl font-semibold text-neutral-900">
-                {formatCurrency(results.safeHarborAmount)}
+                <AnimatedNumber value={results.safeHarborAmount} />
               </p>
             </div>
           </div>
@@ -46,7 +53,7 @@ export function TaxResultsDisplay({ results, onReset }: TaxResultsDisplayProps) 
           <div className="pt-2">
             <p className="text-sm text-neutral-600">Total Remaining to Pay</p>
             <p className="text-3xl font-bold text-primary">
-              {formatCurrency(totalRemaining)}
+              <AnimatedNumber value={totalRemaining} duration={1500} />
             </p>
           </div>
         </CardContent>
@@ -112,7 +119,10 @@ export function TaxResultsDisplay({ results, onReset }: TaxResultsDisplayProps) 
             <Button
               size="lg"
               fullWidth
-              onClick={() => window.open('https://www.irs.gov/payments/direct-pay', '_blank')}
+              onClick={() => {
+                analytics.trackPaymentClick()
+                window.open('https://www.irs.gov/payments/direct-pay', '_blank')
+              }}
             >
               Pay Now with IRS Direct Pay
             </Button>

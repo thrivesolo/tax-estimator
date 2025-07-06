@@ -6,6 +6,7 @@ import { zodResolver } from "@hookform/resolvers/zod"
 import { z } from "zod"
 import { Button, Input, Card, CardContent, CardDescription, CardHeader, CardTitle, Spinner } from "@/components/ui"
 import { calculateQuarterlyPayments } from "@/lib/tax-calculations"
+import { analytics } from "@/lib/analytics"
 import type { TaxCalculationInput, TaxCalculationResult } from "@/types"
 
 const taxFormSchema = z.object({
@@ -49,6 +50,13 @@ export function TaxCalculatorForm({ onCalculate }: TaxCalculatorFormProps) {
   const onSubmit = async (data: TaxFormData) => {
     setIsCalculating(true)
     
+    // Track form submission
+    analytics.trackCalculation({
+      annualIncome: data.annualIncome,
+      previousYearTax: data.previousYearTax,
+      currentYearPayments: data.currentYearPayments,
+    })
+    
     // Simulate a brief delay for better UX
     await new Promise(resolve => setTimeout(resolve, 500))
     
@@ -76,7 +84,7 @@ export function TaxCalculatorForm({ onCalculate }: TaxCalculatorFormProps) {
         </CardDescription>
       </CardHeader>
       <CardContent>
-        <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+        <form onSubmit={handleSubmit(onSubmit)} className="space-y-6" aria-label="Tax calculator form">
           <Input
             label="Estimated Annual Income"
             type="number"

@@ -12,3 +12,7 @@ export type { BadgeProps } from './badge'
 export { Spinner } from './spinner'
 
 export { Alert, AlertTitle, AlertDescription } from './alert'
+
+export { AnimatedNumber } from './animated-number'
+
+export { Skeleton } from './skeleton'

@@ -10,21 +10,27 @@ export interface InputProps
 }
 
 const Input = React.forwardRef<HTMLInputElement, InputProps>(
-  ({ className, label, error, hint, icon, ...props }, ref) => {
+  ({ className, label, error, hint, icon, id, ...props }, ref) => {
+    const inputId = id || props.name
+    const hintId = hint ? `${inputId}-hint` : undefined
+    const errorId = error ? `${inputId}-error` : undefined
+    const describedBy = [hintId, errorId].filter(Boolean).join(' ') || undefined
+
     return (
       <div className="w-full">
         {label && (
-          <label className="block text-sm font-medium text-neutral-700 mb-1.5">
+          <label htmlFor={inputId} className="block text-sm font-medium text-neutral-700 mb-1.5">
             {label}
           </label>
         )}
         <div className="relative">
           {icon && (
-            <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-neutral-500">
+            <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-neutral-500" aria-hidden="true">
               {icon}
             </div>
           )}
           <input
+            id={inputId}
             className={cn(
               "w-full rounded-lg border border-neutral-300 bg-white px-4 py-2.5 text-base text-neutral-900 transition-all duration-200",
               "placeholder:text-neutral-400 hover:border-neutral-400",
@@ -37,14 +43,16 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
               className
             )}
             ref={ref}
+            aria-invalid={!!error}
+            aria-describedby={describedBy}
             {...props}
           />
         </div>
         {hint && !error && (
-          <p className="mt-1.5 text-sm text-neutral-600">{hint}</p>
+          <p id={hintId} className="mt-1.5 text-sm text-neutral-600">{hint}</p>
         )}
         {error && (
-          <p className="mt-1.5 text-sm text-error">{error}</p>
+          <p id={errorId} className="mt-1.5 text-sm text-error" role="alert">{error}</p>
         )}
       </div>
     )

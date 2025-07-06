@@ -3,6 +3,9 @@ import { TaxCalculator } from "@/components/tax-calculator"
 export default function Home() {
   return (
     <div className="min-h-screen bg-background">
+      <a href="#main-content" className="sr-only focus:not-sr-only focus:absolute focus:top-4 focus:left-4 bg-primary text-white px-4 py-2 rounded-md">
+        Skip to main content
+      </a>
       <header className="border-b border-neutral-200 bg-white">
         <div className="container mx-auto px-4 py-4 sm:py-6">
           <h1 className="text-2xl sm:text-3xl font-bold text-neutral-900">
@@ -14,7 +17,7 @@ export default function Home() {
         </div>
       </header>
 
-      <main className="container mx-auto px-4 py-8 md:py-12">
+      <main id="main-content" className="container mx-auto px-4 py-8 md:py-12">
         <TaxCalculator />
       </main>
 
