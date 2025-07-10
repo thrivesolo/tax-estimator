@@ -2,7 +2,7 @@ import { TaxCalculator } from "@/components/tax-calculator"
 
 export default function Home() {
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-white">
       <a href="#main-content" className="sr-only focus:not-sr-only focus:absolute focus:top-4 focus:left-4 bg-primary text-white px-4 py-2 rounded-md">
         Skip to main content
       </a>
